@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"module": "commonjs" /* 'none', 'commonjs', 'amd', 'system', etc */,
+		"target": "es5" /* Specify ECMAScript target version: */,
+		"declaration": true /* Concatenate & emit output to single file.*/,
+		"outDir": "lib" /* Redirect output to the directory. */,
+		"esModuleInterop": true /* Enables intero between CommonJS and ES */,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules"]
+}
