@@ -1,11 +1,11 @@
-import getResourceClient from './api/resource';
+import getApiClient from './api';
 
-const call = async () => {
-	const methodClient = getResourceClient('http://95.111.200.229/')(
-		'Test Document',
-	);
-	const result = await methodClient.deleteDoc('22961b3957');
-	console.log(result[0]);
-};
+const client = getApiClient('http://95.111.200.229/');
 
-call();
+const test_document_api = client.resource('Test Document');
+
+test_document_api.getList().then(res => console.log(res[0].data));
+
+client.method
+	.get('lakshmiagency.api.get_doc', { name: 'Test Document', date: 'fad' })
+	.then(res => console.log(res[0].message));

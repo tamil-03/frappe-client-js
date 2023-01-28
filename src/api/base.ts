@@ -8,7 +8,6 @@ const getURL = (params: ApiParameters) => {
 	url += params.endpoint;
 	url += params.name ? `/${params.name}/` : '';
 	url += params.parameters ? `?${getQueryString(params.parameters)}` : '';
-	console.log(url);
 	return url;
 };
 
@@ -21,7 +20,6 @@ const getOptions = (method: RESTMethod, options: RequestInit) => {
 		method,
 		body,
 	};
-	console.log(requestOptions);
 	return requestOptions;
 };
 
