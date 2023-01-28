@@ -1,4 +1,4 @@
-import { resolvePromise, resolveResponse } from '../utility/promise';
+import { resolveResponse } from '../utility/promise';
 import { getQueryString } from '../utility/string';
 import { RESTMethod, ApiParameters } from '../utility/types';
 
@@ -26,22 +26,9 @@ const getOptions = (method: RESTMethod, options: RequestInit) => {
 const getApiCall =
 	(method: RESTMethod) =>
 	async (url: ApiParameters, options: RequestInit | undefined = {}) => {
-		const [response, responseError] = await resolveResponse(
+		return await resolveResponse(
 			fetch(getURL(url), getOptions(method, options)),
 		);
-
-		if (!response)
-			if (responseError instanceof Response) {
-				const [errorResponse, errorResponseError] = await resolvePromise(
-					responseError.json(),
-				);
-				return [
-					null,
-					errorResponseError || errorResponse || 'Unexpected Error',
-				];
-			} else return [null, responseError];
-
-		return await resolvePromise(response.json());
 	};
 
 const apiClient = {

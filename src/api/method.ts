@@ -3,19 +3,17 @@ import apiClient from './base';
 
 const getMethodCall =
 	(baseUrl: string, func: Function) =>
-	async (
-		endpoint: string,
-		parameters: Object = {},
-		body: Object = {},
-		headers: HeadersInit = {},
-	) => {
+	async (endpoint: string, args: Object, headers: HeadersInit = {}) => {
 		const params: MethodApiParameters = {
 			baseUrl,
 			path: 'api/method',
 			endpoint,
-			parameters,
+			parameters: func === apiClient.get ? args : undefined,
 		};
-		const options: RequestInit = { body: JSON.stringify(body), headers };
+		const options: RequestInit = {
+			body: JSON.stringify(func !== apiClient.get ? args : undefined),
+			headers,
+		};
 		return await func(params, options);
 	};
 
