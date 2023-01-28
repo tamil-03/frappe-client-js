@@ -1,3 +1,5 @@
+export type RESTMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
 export type DocumentCallParamerters = {
 	fields?: string[]; // ['name', 'title']
 	filters?: { [key: string]: string }; // { name: 'test' }

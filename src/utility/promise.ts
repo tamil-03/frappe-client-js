@@ -13,8 +13,14 @@ export const resolveResponse = async (
 	promise: Promise<Response>,
 ): Promise<[Response | null, any]> => {
 	try {
-		const result: Response = await promise;
-		return [result, null];
+		const response: Response = await promise;
+
+		const status = response.status;
+		if (!(status >= 200 && status < 300)) {
+			return [null, response];
+		}
+
+		return [response, null];
 	} catch (error) {
 		return [null, error];
 	}

@@ -3,15 +3,15 @@ import apiClient from './base';
 
 const getMethodCall =
 	(baseUrl: string, func: Function) =>
-	async (endpoint: string, parameters: any) => {
+	async (endpoint: string, parameters: Object = {}, body: Object = {}) => {
 		const params: MethodApiParameters = {
 			baseUrl,
 			path: 'api/method',
 			endpoint,
 			parameters,
 		};
-
-		return await func(params);
+		const options: RequestInit = { body: JSON.stringify(body) };
+		return await func(params, options);
 	};
 
 const getMethod = (baseUrl: string) => ({

@@ -1,6 +1,14 @@
 import { resolvePromise, resolveResponse } from '../utility/promise';
 import { getQueryString } from '../utility/string';
-import { ApiParameters } from '../utility/types';
+import { RESTMethod, ApiParameters } from '../utility/types';
+
+const getHeaders = () => ({
+	'Content-Type': 'application/json',
+	'User-Agent': 'Frappe client js',
+	Accept: '*/*',
+	'Accept-Encoding': 'gzip, deflate, br',
+	Authorization: 'token', //getAccessToken();,
+});
 
 const getURL = (params: ApiParameters) => {
 	let url = `${params.baseUrl}/`;
@@ -12,16 +20,22 @@ const getURL = (params: ApiParameters) => {
 };
 
 const getApiCall =
-	(method: 'GET' | 'POST' | 'PUT' | 'DELETE') =>
+	(method: RESTMethod) =>
 	async (url: ApiParameters, options: RequestInit | undefined = {}) => {
 		const [response, responseError] = await resolveResponse(
-			fetch(getURL(url), { method, ...options }),
+			fetch(getURL(url), {
+				method,
+				...options,
+				headers: getHeaders(),
+			}),
 		);
-		const [data, dataError] = response
-			? await resolvePromise(response.json())
-			: [null, responseError];
 
-		return [data, dataError];
+		if (response) return await resolvePromise(response.json());
+
+		if (responseError instanceof Response)
+			return [null, await resolvePromise(responseError.json())];
+
+		return [null, responseError];
 	};
 
 const apiClient = {
