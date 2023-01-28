@@ -1,17 +1,13 @@
-import apiClient from './api/base';
+import getMethod from './api/method';
 
-async function call() {
-	const [result, error] = await apiClient.get({
-		baseUrl: 'http://95.111.200.229',
-		path: 'api/resource',
-		endpoint: 'Test Document',
-		// id: 'ae0782ff4d',
-		// parameters: { fields: ['name'], filters: { name: '16411b555d' } },
+const methodCall = getMethod('http://95.111.200.229');
+
+const call = async () => {
+	const result = await methodCall.delete('lakshmiagency.api.get_doc', {
+		name: 'Lakshmi Agency',
+		date: 'Nethu',
 	});
 
-	if (error) throw error;
-
 	console.log(result);
-}
-
+};
 call();

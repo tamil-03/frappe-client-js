@@ -11,10 +11,26 @@ export type DocumentCallParamerters = {
 	debug?: boolean; // true
 };
 
-export type GetApiParameters = {
+export type ApiParameters = {
 	baseUrl: string; // http://localhost:8000
 	path: 'api/resource' | 'api/method'; // api/resource
-	endpoint: string; // DocType
-	id?: string; // DocName
+	endpoint: string; // DocType (or) Method Path
+	name?: string; // DocName
 	parameters?: DocumentCallParamerters; // { fields: ['name', 'title'], filters: { name: 'test' },  .... }
+};
+
+export type MethodApiParameters = {
+	baseUrl: string; // http://localhost:8000
+	path: 'api/method'; // api/resource
+	endpoint: string; // MethodPath
+	parameters?: DocumentCallParamerters; // { fields: ['name', 'title'], filters: { name: 'test' },  .... }
+};
+
+export type ResourceApiParameters = {
+	baseUrl: string; // http://localhost:8000
+	path: 'api/resource'; // api/resource
+	endpoint: string; // MethodPath
+	name?: string; // DocName
+	parameters?: DocumentCallParamerters;
+	body?: Object;
 };
