@@ -1,16 +1,11 @@
-import getResource from './api/resource';
+import getResourceClient from './api/resource';
 
-const methodCall = getResource('http://95.111.200.229');
-
-const call = async (name?: string) => {
-	const result = await methodCall.delete(
+const call = async () => {
+	const methodClient = getResourceClient('http://95.111.200.229/')(
 		'Test Document',
-		name,
-		{},
-		{ field_1: 'T', field_2: 2 },
-		{},
 	);
+	const result = await methodClient.deleteDoc('22961b3957');
 	console.log(result[0]);
 };
 
-call('ac8b389c38');
+call();

@@ -19,11 +19,11 @@ const getMethodCall =
 		return await func(params, options);
 	};
 
-const getMethod = (baseUrl: string) => ({
+const getMethodClient = (baseUrl: string) => ({
 	get: getMethodCall(baseUrl, apiClient.get),
 	post: getMethodCall(baseUrl, apiClient.post),
 	put: getMethodCall(baseUrl, apiClient.put),
 	delete: getMethodCall(baseUrl, apiClient.delete),
 });
 
-export default getMethod;
+export default getMethodClient;

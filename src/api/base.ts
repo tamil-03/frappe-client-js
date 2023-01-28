@@ -15,12 +15,14 @@ const getURL = (params: ApiParameters) => {
 const getOptions = (method: RESTMethod, options: RequestInit) => {
 	const headers = { 'Content-Type': 'application/json' };
 	const body = method === 'GET' ? undefined : options?.body;
-	return {
+	const requestOptions: RequestInit = {
 		...options,
 		headers: { ...options?.headers, ...headers },
 		method,
 		body,
 	};
+	console.log(requestOptions);
+	return requestOptions;
 };
 
 const getApiCall =

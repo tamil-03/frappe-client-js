@@ -35,3 +35,9 @@ export type ResourceApiParameters = {
 	name?: string; // DocName
 	parameters?: DocumentCallParamerters;
 };
+
+export type ResourceClientParameters = {
+	parameters?: DocumentCallParamerters;
+	body?: Object;
+	headers?: HeadersInit;
+};
