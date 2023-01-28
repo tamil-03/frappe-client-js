@@ -2,40 +2,46 @@ import { resolvePromise, resolveResponse } from '../utility/promise';
 import { getQueryString } from '../utility/string';
 import { RESTMethod, ApiParameters } from '../utility/types';
 
-const getHeaders = () => ({
-	'Content-Type': 'application/json',
-	'User-Agent': 'Frappe client js',
-	Accept: '*/*',
-	'Accept-Encoding': 'gzip, deflate, br',
-	Authorization: 'token', //getAccessToken();,
-});
-
 const getURL = (params: ApiParameters) => {
 	let url = `${params.baseUrl}/`;
 	url += `${params.path}/`;
 	url += params.endpoint;
 	url += params.name ? `/${params.name}/` : '';
 	url += params.parameters ? `?${getQueryString(params.parameters)}` : '';
+	console.log(url);
 	return url;
+};
+
+const getOptions = (method: RESTMethod, options: RequestInit) => {
+	const headers = { 'Content-Type': 'application/json' };
+	const body = method === 'GET' ? undefined : options?.body;
+	return {
+		...options,
+		headers: { ...options?.headers, ...headers },
+		method,
+		body,
+	};
 };
 
 const getApiCall =
 	(method: RESTMethod) =>
 	async (url: ApiParameters, options: RequestInit | undefined = {}) => {
 		const [response, responseError] = await resolveResponse(
-			fetch(getURL(url), {
-				method,
-				...options,
-				headers: getHeaders(),
-			}),
+			fetch(getURL(url), getOptions(method, options)),
 		);
 
-		if (response) return await resolvePromise(response.json());
+		if (!response)
+			if (responseError instanceof Response) {
+				const [errorResponse, errorResponseError] = await resolvePromise(
+					responseError.json(),
+				);
+				return [
+					null,
+					errorResponseError || errorResponse || 'Unexpected Error',
+				];
+			} else return [null, responseError];
 
-		if (responseError instanceof Response)
-			return [null, await resolvePromise(responseError.json())];
-
-		return [null, responseError];
+		return await resolvePromise(response.json());
 	};
 
 const apiClient = {

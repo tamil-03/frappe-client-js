@@ -1,13 +1,16 @@
-import getMethod from './api/method';
+import getResource from './api/resource';
 
-const methodCall = getMethod('http://95.111.200.229');
+const methodCall = getResource('http://95.111.200.229');
 
-const call = async () => {
-	const result = await methodCall.post('lakshmiagency.api.get_doc', undefined, {
-		name: 'Lakshmi Agency 2',
-		date: 'Munthannethu',
-	});
-
-	console.log(result);
+const call = async (name?: string) => {
+	const result = await methodCall.delete(
+		'Test Document',
+		name,
+		{},
+		{ field_1: 'T', field_2: 2 },
+		{},
+	);
+	console.log(result[0]);
 };
-call();
+
+call('ac8b389c38');

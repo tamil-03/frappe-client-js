@@ -34,5 +34,4 @@ export type ResourceApiParameters = {
 	endpoint: string; // MethodPath
 	name?: string; // DocName
 	parameters?: DocumentCallParamerters;
-	body?: Object;
 };
