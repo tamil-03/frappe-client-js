@@ -25,6 +25,7 @@ const getOptions = (method: RESTMethod, options: RequestInit) => {
 		method,
 		body,
 	};
+	console.log(requestOptions);
 	return requestOptions;
 };
 
