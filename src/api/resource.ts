@@ -1,18 +1,19 @@
 import {
 	DocumentCallParamerters,
+	FrappeResponse,
 	ResourceApiParameters,
 } from '../utility/types';
-import apiClient from './base';
+import apiClient, { ApiCall } from './base';
 
 const getMethodCall =
-	(baseUrl: string, func: Function) =>
+	(baseUrl: string, func: ApiCall) =>
 	(endpoint: string) =>
 	async (
 		name?: string,
 		parameters: DocumentCallParamerters = {},
 		body: Object = {},
 		headers: HeadersInit = {},
-	) => {
+	): Promise<FrappeResponse> => {
 		const params: ResourceApiParameters = {
 			baseUrl,
 			path: 'api/resource',
@@ -28,7 +29,7 @@ const getResourceClient = (baseUrl: string) => (endpoint: string) => ({
 	getList: (
 		parameters: DocumentCallParamerters = {},
 		headers: HeadersInit = {},
-	) =>
+	): Promise<FrappeResponse> =>
 		getMethodCall(baseUrl, apiClient.get)(endpoint)(
 			undefined,
 			parameters,
@@ -39,28 +40,39 @@ const getResourceClient = (baseUrl: string) => (endpoint: string) => ({
 		name: string,
 		parameters: DocumentCallParamerters = {},
 		headers: HeadersInit = {},
-	) =>
+	): Promise<FrappeResponse> =>
 		getMethodCall(baseUrl, apiClient.get)(endpoint)(
 			name,
 			parameters,
 			undefined,
 			headers,
 		),
-	createDoc: (body: Object = {}, headers: HeadersInit = {}) =>
+	createDoc: (
+		body: Object = {},
+		headers: HeadersInit = {},
+	): Promise<FrappeResponse> =>
 		getMethodCall(baseUrl, apiClient.post)(endpoint)(
 			undefined,
 			undefined,
 			body,
 			headers,
 		),
-	updateDoc: (name: string, body: Object = {}, headers: HeadersInit = {}) =>
+	updateDoc: (
+		name: string,
+		body: Object = {},
+		headers: HeadersInit = {},
+	): Promise<FrappeResponse> =>
 		getMethodCall(baseUrl, apiClient.put)(endpoint)(
 			name,
 			undefined,
 			body,
 			headers,
 		),
-	deleteDoc: (name: string, body: Object = {}, headers: HeadersInit = {}) =>
+	deleteDoc: (
+		name: string,
+		body: Object = {},
+		headers: HeadersInit = {},
+	): Promise<FrappeResponse> =>
 		getMethodCall(baseUrl, apiClient.delete)(endpoint)(
 			name,
 			undefined,

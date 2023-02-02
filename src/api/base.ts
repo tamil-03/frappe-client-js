@@ -1,6 +1,11 @@
-import { resolveResponse } from '../utility/promise';
+import { resolveResponse, resolveFrappeResponse } from '../utility/promise';
 import { getQueryString } from '../utility/string';
-import { RESTMethod, ApiParameters } from '../utility/types';
+import { RESTMethod, ApiParameters, FrappeResponse } from '../utility/types';
+
+export type ApiCall = (
+	url: ApiParameters,
+	options?: RequestInit,
+) => Promise<FrappeResponse>;
 
 const getURL = (params: ApiParameters) => {
 	let url = `${params.baseUrl}/`;
@@ -25,13 +30,15 @@ const getOptions = (method: RESTMethod, options: RequestInit) => {
 
 const getApiCall =
 	(method: RESTMethod) =>
-	async (url: ApiParameters, options: RequestInit | undefined = {}) => {
-		return await resolveResponse(
-			fetch(getURL(url), getOptions(method, options)),
+	async (
+		url: ApiParameters,
+		options: RequestInit | undefined = {},
+	): Promise<FrappeResponse> =>
+		await resolveFrappeResponse(
+			resolveResponse(fetch(getURL(url), getOptions(method, options))),
 		);
-	};
 
-const apiClient = {
+const apiClient: { [key: string]: ApiCall } = {
 	get: getApiCall('GET'),
 	post: getApiCall('POST'),
 	put: getApiCall('PUT'),

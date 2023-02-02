@@ -1,9 +1,13 @@
-import { MethodApiParameters } from '../utility/types';
-import apiClient from './base';
+import { FrappeResponse, MethodApiParameters } from '../utility/types';
+import apiClient, { ApiCall } from './base';
 
 const getMethodCall =
-	(baseUrl: string, func: Function) =>
-	async (endpoint: string, args: Object, headers: HeadersInit = {}) => {
+	(baseUrl: string, func: ApiCall) =>
+	async (
+		endpoint: string,
+		args: Object,
+		headers: HeadersInit = {},
+	): Promise<FrappeResponse> => {
 		const params: MethodApiParameters = {
 			baseUrl,
 			path: 'api/method',
@@ -17,7 +21,15 @@ const getMethodCall =
 		return await func(params, options);
 	};
 
-const getMethodClient = (baseUrl: string) => ({
+const getMethodClient = (
+	baseUrl: string,
+): {
+	[key: string]: (
+		endpoint: string,
+		args: Object,
+		headers: HeadersInit,
+	) => Promise<FrappeResponse>;
+} => ({
 	get: getMethodCall(baseUrl, apiClient.get),
 	post: getMethodCall(baseUrl, apiClient.post),
 	put: getMethodCall(baseUrl, apiClient.put),

@@ -1,5 +1,13 @@
 export type RESTMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+export type FrappeResponse = {
+	ok: boolean;
+	message: string;
+	response?: Response | Error | null;
+	body?: object;
+	data?: object | string | number;
+};
+
 export type DocumentCallParamerters = {
 	fields?: string[];
 	filters?: { [key: string]: string };
