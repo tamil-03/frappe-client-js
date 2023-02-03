@@ -1,6 +1,15 @@
-import querystring from 'querystring';
-
 import { DocumentCallParamerters } from './types';
+
+const getKeyValue = (key: string | number, value: string | number) =>
+	`${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+
+const parseQueryString = (obj: { [key: string | number]: string | number }) => {
+	const keyValuePairs = [];
+	for (const key in obj) {
+		keyValuePairs.push(getKeyValue(key, obj[key]));
+	}
+	return keyValuePairs.join('&');
+};
 
 export const stringifyArray = (array: string[]) =>
 	'[' + array.map(field => `"${field}"`).join(',') + ']';
@@ -18,5 +27,5 @@ export function getQueryString(parameters: DocumentCallParamerters): string {
 		else if (typeof value === 'string') queryParts[key] = value;
 	}
 
-	return querystring.stringify(queryParts);
+	return parseQueryString(queryParts);
 }
