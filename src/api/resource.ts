@@ -5,6 +5,29 @@ import {
 } from '../utility/types';
 import apiClient, { ApiCall } from './base';
 
+export type Resource = {
+	getList: (
+		parameters?: DocumentCallParamerters,
+		headers?: HeadersInit,
+	) => Promise<FrappeResponse>;
+	getDoc: (
+		name: string,
+		parameters?: DocumentCallParamerters,
+		headers?: HeadersInit,
+	) => Promise<FrappeResponse>;
+	createDoc: (body?: Object, headers?: HeadersInit) => Promise<FrappeResponse>;
+	updateDoc: (
+		name: string,
+		body?: Object,
+		headers?: HeadersInit,
+	) => Promise<FrappeResponse>;
+	deleteDoc: (
+		name: string,
+		body?: Object,
+		headers?: HeadersInit,
+	) => Promise<FrappeResponse>;
+};
+
 const getMethodCall =
 	(baseUrl: string, func: ApiCall, getHeaders: () => Promise<HeadersInit>) =>
 	(endpoint: string) =>
@@ -29,8 +52,11 @@ const getMethodCall =
 	};
 
 const getResourceClient =
-	(baseUrl: string, getHeaders: () => Promise<HeadersInit>) =>
-	(endpoint: string) => ({
+	(
+		baseUrl: string,
+		getHeaders: () => Promise<HeadersInit>,
+	): ((endpoint: string) => Resource) =>
+	(endpoint: string): Resource => ({
 		getList: (
 			parameters: DocumentCallParamerters = {},
 			headers?: HeadersInit,

@@ -1,6 +1,19 @@
 import { FrappeResponse, MethodApiParameters } from '../utility/types';
 import apiClient, { ApiCall } from './base';
 
+export type MethodCall = (
+	endpoint: string,
+	args: Object,
+	headers?: HeadersInit,
+) => Promise<FrappeResponse>;
+
+export type Method = {
+	get: MethodCall;
+	post: MethodCall;
+	put: MethodCall;
+	delete: MethodCall;
+};
+
 const getMethodCall =
 	(baseUrl: string, func: ApiCall, getHeaders: () => Promise<HeadersInit>) =>
 	async (
@@ -24,13 +37,7 @@ const getMethodCall =
 const getMethodClient = (
 	baseUrl: string,
 	getHeaders: () => Promise<HeadersInit>,
-): {
-	[key: string]: (
-		endpoint: string,
-		args: Object,
-		headers?: HeadersInit,
-	) => Promise<FrappeResponse>;
-} => ({
+): Method => ({
 	get: getMethodCall(baseUrl, apiClient.get, getHeaders),
 	post: getMethodCall(baseUrl, apiClient.post, getHeaders),
 	put: getMethodCall(baseUrl, apiClient.put, getHeaders),
