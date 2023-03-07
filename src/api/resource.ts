@@ -1,115 +1,39 @@
-import {
-	DocumentCallParamerters,
-	FrappeResponse,
-	ResourceApiParameters,
-} from '../utility/types';
-import apiClient, { ApiCall } from './base';
+import BaseAPIClient from './client';
+import Document from './document';
+import { DocumentCallParamerters, FrappePath } from './types';
 
-export type Resource = {
-	getList: (
-		parameters?: DocumentCallParamerters,
-		headers?: HeadersInit,
-	) => Promise<FrappeResponse>;
-	getDoc: (
-		name: string,
-		parameters?: DocumentCallParamerters,
-		headers?: HeadersInit,
-	) => Promise<FrappeResponse>;
-	createDoc: (body?: Object, headers?: HeadersInit) => Promise<FrappeResponse>;
-	updateDoc: (
-		name: string,
-		body?: Object,
-		headers?: HeadersInit,
-	) => Promise<FrappeResponse>;
-	deleteDoc: (
-		name: string,
-		body?: Object,
-		headers?: HeadersInit,
-	) => Promise<FrappeResponse>;
-};
+class Resource extends BaseAPIClient {
+	protected type: FrappePath = '/api/resource/';
 
-const getMethodCall =
-	(baseUrl: string, func: ApiCall, getHeaders: () => Promise<HeadersInit>) =>
-	(endpoint: string) =>
-	async (
-		name?: string,
-		parameters: DocumentCallParamerters = {},
-		body: Object = {},
-		headers?: HeadersInit,
-	): Promise<FrappeResponse> => {
-		const params: ResourceApiParameters = {
-			baseUrl,
-			path: 'api/resource',
-			endpoint,
-			name,
-			parameters,
-		};
-		const options: RequestInit = {
-			body: JSON.stringify(body),
-			headers: { ...(await getHeaders()), ...headers },
-		};
-		return await func(params, options);
-	};
-
-const getResourceClient =
-	(
+	constructor(
 		baseUrl: string,
-		getHeaders: () => Promise<HeadersInit>,
-	): ((endpoint: string) => Resource) =>
-	(endpoint: string): Resource => ({
-		getList: (
-			parameters: DocumentCallParamerters = {},
-			headers?: HeadersInit,
-		): Promise<FrappeResponse> =>
-			getMethodCall(baseUrl, apiClient.get, getHeaders)(endpoint)(
-				undefined,
-				parameters,
-				undefined,
-				headers,
-			),
-		getDoc: (
-			name: string,
-			parameters: DocumentCallParamerters = {},
-			headers?: HeadersInit,
-		): Promise<FrappeResponse> =>
-			getMethodCall(baseUrl, apiClient.get, getHeaders)(endpoint)(
-				name,
-				parameters,
-				undefined,
-				headers,
-			),
-		createDoc: (
-			body: Object = {},
-			headers?: HeadersInit,
-		): Promise<FrappeResponse> =>
-			getMethodCall(baseUrl, apiClient.post, getHeaders)(endpoint)(
-				undefined,
-				undefined,
-				body,
-				headers,
-			),
-		updateDoc: (
-			name: string,
-			body: Object = {},
-			headers?: HeadersInit,
-		): Promise<FrappeResponse> =>
-			getMethodCall(baseUrl, apiClient.put, getHeaders)(endpoint)(
-				name,
-				undefined,
-				body,
-				headers,
-			),
-		deleteDoc: (
-			name: string,
-			body: Object = {},
-			headers?: HeadersInit,
-		): Promise<FrappeResponse> =>
-			getMethodCall(baseUrl, apiClient.delete, getHeaders)(endpoint)(
-				name,
-				undefined,
-				body,
-				headers,
-			),
-	});
+		doctype: string,
+		getGlobalOptions?: () => Promise<RequestInit>,
+	) {
+		super(baseUrl, `${doctype}`, getGlobalOptions);
+	}
 
-export default getResourceClient;
+	public list(query?: DocumentCallParamerters, options?: RequestInit) {
+		return this.getCall('GET')('/', query, options);
+	}
+
+	public get(name: string, options?: RequestInit) {
+		return this.getCall('GET')(`/${name}`, {}, options);
+	}
+
+	public getDoc(name: string) {
+		const doc: Document = new Document(
+			this.baseUrl,
+			this.path,
+			name,
+			this.getGlobalOptions,
+		);
+		return doc;
+	}
+
+	public create(data: object, options?: RequestInit) {
+		return this.getCall('POST')('', data, options);
+	}
+}
+
+export default Resource;

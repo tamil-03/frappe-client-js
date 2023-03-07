@@ -1,47 +1,44 @@
-import { FrappeResponse, MethodApiParameters } from '../utility/types';
-import apiClient, { ApiCall } from './base';
+import BaseAPIClient from './client';
+import { FrappePath } from './types';
 
-export type MethodCall = (
-	endpoint: string,
-	args: Object,
-	headers?: HeadersInit,
-) => Promise<FrappeResponse>;
+class Method extends BaseAPIClient {
+	protected type: FrappePath = '/api/method/';
 
-export type Method = {
-	get: MethodCall;
-	post: MethodCall;
-	put: MethodCall;
-	delete: MethodCall;
-};
+	constructor(
+		baseUrl: string,
+		appName: string,
+		getGlobalOptions?: () => Promise<RequestInit>,
+	) {
+		super(baseUrl, `${appName}.`, getGlobalOptions);
+	}
 
-const getMethodCall =
-	(baseUrl: string, func: ApiCall, getHeaders: () => Promise<HeadersInit>) =>
-	async (
-		endpoint: string,
-		args: Object,
-		headers: HeadersInit = {},
-	): Promise<FrappeResponse> => {
-		const params: MethodApiParameters = {
-			baseUrl,
-			path: 'api/method',
-			endpoint,
-			parameters: func === apiClient.get ? args : undefined,
-		};
-		const options: RequestInit = {
-			body: JSON.stringify(func !== apiClient.get ? args : undefined),
-			headers: { ...(await getHeaders()), ...headers },
-		};
-		return await func(params, options);
-	};
+	public get(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('GET')(endpoint, data, options);
+	}
 
-const getMethodClient = (
-	baseUrl: string,
-	getHeaders: () => Promise<HeadersInit>,
-): Method => ({
-	get: getMethodCall(baseUrl, apiClient.get, getHeaders),
-	post: getMethodCall(baseUrl, apiClient.post, getHeaders),
-	put: getMethodCall(baseUrl, apiClient.put, getHeaders),
-	delete: getMethodCall(baseUrl, apiClient.delete, getHeaders),
-});
+	public post(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('POST')(endpoint, data, options);
+	}
 
-export default getMethodClient;
+	public put(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('PUT')(endpoint, data, options);
+	}
+
+	public patch(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('PATCH')(endpoint, data, options);
+	}
+
+	public delete(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('DELETE')(endpoint, data, options);
+	}
+
+	public head(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('HEAD')(endpoint, data, options);
+	}
+
+	public options(endpoint: string, data?: object, options?: RequestInit) {
+		return this.getCall('OPTIONS')(endpoint, data, options);
+	}
+}
+
+export default Method;

@@ -1,13 +1,39 @@
-import getApiClient from './api';
+import { Document, Method, Resource } from './api';
+export * from './api/types';
+export class FrappeClient {
+	private baseUrl: string;
+	private getGlobalOptions?: () => Promise<RequestInit>;
 
-const FrappeClient = (
-	baseUrl: string,
-	getHeaders: () => Promise<HeadersInit> = () => Promise.resolve({}),
-) => {
-	const verifiedURL = new URL(baseUrl).href;
-	return {
-		...getApiClient(verifiedURL, getHeaders),
-	};
-};
+	constructor(baseUrl: string, getGlobalOptions?: () => Promise<RequestInit>) {
+		this.baseUrl = baseUrl;
+		this.getGlobalOptions = getGlobalOptions;
+	}
 
-export { FrappeClient, getApiClient };
+	public Resource(doctype: string): Resource {
+		const resource: Resource = new Resource(
+			this.baseUrl,
+			doctype,
+			this.getGlobalOptions,
+		);
+		return resource;
+	}
+
+	public Method(appName: string): Method {
+		const methodClient: Method = new Method(
+			this.baseUrl,
+			appName,
+			this.getGlobalOptions,
+		);
+		return methodClient;
+	}
+
+	public Document(doctype: string, docname: string): Document {
+		const doc: Document = new Document(
+			this.baseUrl,
+			doctype,
+			docname,
+			this.getGlobalOptions,
+		);
+		return doc;
+	}
+}
