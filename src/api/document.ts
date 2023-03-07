@@ -31,6 +31,7 @@ class Document extends BaseAPIClient {
 
 	public async delete(options?: RequestInit) {
 		const result = await this.getCall('DELETE')('', {}, options);
+		this.document = undefined;
 		return result.data;
 	}
 }

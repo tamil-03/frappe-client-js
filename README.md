@@ -22,63 +22,94 @@ npm install frappe-client
 
 ```js
 import { FrappeClient } from 'frappe-client';
-// or 
-const { FrappeClient, getApiClient } = require('frappe-client');
+// or
+const { FrappeClient } = require('frappe-client');
 ```
 
 ### Creating a client
 
 ```js
-// includes all the clients (api, etc)
-const frappe = FrappeClient('https://localhost:80/');
+const getHeaders = async () => ({
+	Authorization: 'Bearer ...',
+});
 
-// for separate client
-const apiClient = getApiClient('https://localhost:80/');
+// includes all the clients (api, etc)
+const frappe = new FrappeClient(baseURL, getHeaders);
 ```
 
 ### Frappe Resource Calls (Direct Doctype Access)
 
 ```js
-const document = frappe.resource('Doctype Name');
-document.getList(params, headers); // get list of doucments
-document.getDoc(name, params, headers); // get document by name
-document.createDoc(body, headers); // create document
-document.updateDoc(name, body, headers); // update document
-document.deleteDoc(name, body, headers); // delete document
+const doctype = frappe.Resource('Doctype');
+
+doctype.list({ filters, fields, ...more }).then(res => console.log(res.data)); // get list of documents
+doctype.create({ ...data }).then(res => console.log(res.data)); // create a document
+doctype.get('docname').then(res => console.log(res.data)); // get a document
+
+const document = doctype.getDoc('docname'); // get a Document object
 ```
 
 #### Resource Call Example
 
 ```js
-async () => {
- const TestDocument = frappe.resource('DocType Name');
- const [response, error] = await TestDocument.deleteDoc('document name');
+(async () => {
+	const doctype = frappe.Resource('Doctype');
+	const response = await doctype.list({ filters, fields, ...more });
+	console.log(response.data);
+})();
+```
 
- if (error) console.log(error);
-    else console.log(response);
-};
+### Frappe Document Acces
+
+```js
+const doctype = frappe.Resource('Doctype');
+
+// get a Document object
+const document = doctype.getDoc('docname');
+// or
+const document = frappe.Document('Doctype', 'docname');
+
+document.get().then(console.log); // get data from server and add it to cache
+document.update({ ...data }).then(console.log); // update data and update to cache
+document.delete().then(console.log); // delete data and remove from cache
+document.getDocument().then(console.log); // get data from cache
+```
+
+#### Document Call Example
+
+```js
+(async () => {
+	const doctype = frappe.Resource('Doctype');
+	const document = frappe.Document('Doctype', 'docname');
+	const response = await document.get();
+	console.log(response);
+})();
 ```
 
 ### Frappe Remote Method Calls
 
 ```js
-const methodApi = frappe.method;
-methodApi.get(methodPath, args, headers); // GET request
-methodApi.post(methodPath, args, headers); // POST request
-methodApi.put(methodPath, args, headers); // PUT request
-methodApi.delete(methodPath, args, headers); // DELETE request
+// we can access the methods scoped to the app
+const app = frappe.Method('appName'); // get a Method object with the appname
+
+app.get(methodPath, args); // GET request
+app.post(methodPath, args); // POST request
+app.put(methodPath, args); // PUT request
+app.delete(methodPath, args); // DELETE request
+app.head(methodPath, args); // HEAD request
+app.options(methodPath, args); // OPTIONS request
 ```
 
-#### Method Call Example
+#### Method Call Example (RPC)
 
 ```js
-frappe.method.get(
-    'app_name.api.method_name', // remote method path
-    { arg1: 'value 1', arg2: 'value 2' }, // args for remote method
-    { 'X-AUTH': 'special_key' } // headers
-).then(res => res[0]?.json())
-.then(data => console.log(data))
-.catch(err => console.log(err));
+const app = frappe.Method('appName');
+app
+	.post('module_name.path.method_name', {
+		arg1: 'ARG!',
+		arg2: 'ARG!!',
+	})
+	.then(console.log);
 ```
 
 ## Testing
@@ -92,4 +123,5 @@ npm test
 ## License
 
 ---
+
 The MIT License. See the [license file](LICENSE) for details.
