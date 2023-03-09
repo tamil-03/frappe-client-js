@@ -1,5 +1,8 @@
 import { Document, Method, Resource } from './api';
+
+export { Document, Method, Resource } from './api';
 export * from './api/types';
+
 export class FrappeClient {
 	private baseUrl: string;
 	private getGlobalOptions?: () => Promise<RequestInit>;

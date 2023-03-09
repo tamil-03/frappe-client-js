@@ -72,7 +72,7 @@ const document = frappe.Document('Doctype', 'docname');
 document.get().then(console.log); // get data from server and add it to cache
 document.update({ ...data }).then(console.log); // update data and update to cache
 document.delete().then(console.log); // delete data and remove from cache
-document.getDocument().then(console.log); // get data from cache
+console.log(document.getDocument()) // get data from cache
 ```
 
 #### Document Call Example
